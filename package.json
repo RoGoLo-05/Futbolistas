@@ -1,0 +1,1 @@
+{"name":"01rutas","version":"1.0.0","description":"","main":"index.js","scripts":{"test":"echo \"Error: no test speeilied\" && exit 1","dev":"nodemon 01-express","start":"node 01-express"},"keywords":[],"author":"","license":"ISC","dependencies":{"body-parser":"^1.20.3","dotenv":"^16.4.7","ejs":"^3.1.8","express":"^4.18.2","mongoose":"^8.10.1","multer":"^1.4.5-lts.1"}}
