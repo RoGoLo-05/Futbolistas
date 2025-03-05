@@ -1,243 +1,295 @@
 <%- include("template/cabecera", {tituloWeb: "Panel de Administración" }) %>
 
-<div class="container">
-    <h1 class="mt-5">Futbolistas del Sevilla FC</h1>
+    <div class="container">
+        <h1 class="mt-5 text-center">Futbolistas del Sevilla FC</h1>
 
-    <!-- Botón para abrir modal de CREAR -->
-    <button class="btn btn-success btn-block my-4" data-bs-toggle="modal" data-bs-target="#modalCrear">Crear nuevo futbolista</button>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Imagen</th>
-                <th scope="col">Id</th>
-                <th scope="col">Nombre</th>
-                <th scope="col">Posición</th>
-                <th scope="col">Nacionalidad</th>
-                <th scope="col">Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% if(arrayFutbolistas.length > 0) { %>
-                <% arrayFutbolistas.forEach(futbolista => { %>
-                    <tr>
-                        <td>
-                            <img src="<%= futbolista.imagen ? futbolista.imagen : '/uploads/default.png' %>" 
-                                 alt="<%= futbolista.nombre %>" 
-                                 class="img-thumbnail" 
-                                 style="width: 50px; height: 50px;">
-                        </td>
-                        <th scope="row"><%= futbolista.id %></th>
-                        <td><%= futbolista.nombre %></td>
-                        <td><%= futbolista.posicion %></td>
-                        <td><%= futbolista.nacionalidad %></td>
-                        <td>
-                            <!-- Botón Editar (Abre modal de edición) -->
-                            <button class="btn btn-warning btn-sm" onclick="abrirModalEditar('<%= futbolista._id %>')">Editar</button>
-
-                            <!-- Botón Eliminar -->
-                            <button class="btn btn-danger btn-sm" onclick="eliminarFutbolista('<%= futbolista._id %>')">Eliminar</button>
-                        </td>
-                    </tr>
-                <% }) %> 
-            <% } %>
-        </tbody>
-    </table>
-</div>
-
-<!-- ================= MODAL CREAR FUTBOLISTA ================= -->
-<div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Crear Futbolista</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formCrear" enctype="multipart/form-data">
-                    <input type="number" placeholder="Id" class="form-control my-2" name="id" id="idCrear">
-                    <input type="text" placeholder="Nombre" class="form-control my-2" name="nombre" id="nombreCrear">
-                    <input type="text" placeholder="Posición" class="form-control my-2" name="posicion" id="posicionCrear">
-                    <input type="text" placeholder="Nacionalidad" class="form-control my-2" name="nacionalidad" id="nacionalidadCrear">
-                    
-                    <label for="imagenCrear">Seleccionar imagen:</label>
-                    <input type="file" class="form-control my-2" name="imagen" id="imagenCrear" accept="image/*">
-
-                    <button type="submit" class="btn btn-dark btn-block">Agregar</button>
-                </form>
-            </div>
+        <!-- Botón para abrir modal de CREAR -->
+        <div class="text-center">
+            <button class="btn btn-success my-4" data-bs-toggle="modal" data-bs-target="#modalCrear">Crear nuevo
+                futbolista</button>
         </div>
-    </div>
-</div>
 
+        <!-- Contenedor de tarjetas con paginación -->
+        <div class="row" id="futbolistas-container">
+            <% arrayFutbolistas.forEach(futbolista=> { %>
+                <div class="col-md-4 col-sm-6 mb-4 futbolista-card">
+                    <div class="card shadow-sm border-0 hover-effect">
+                        <img src="<%= futbolista.imagen ? futbolista.imagen : '/uploads/default.png' %>"
+                            class="card-img-top" alt="<%= futbolista.nombre %>"
+                            style="height: 250px; object-fit: cover;">
 
-<!-- ================= MODAL EDITAR FUTBOLISTA ================= -->
-<div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Editar Futbolista</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Imagen actual -->
-                <div class="text-center">
-                    <img id="imagen-preview" class="img-fluid my-3" style="max-width: 200px; border-radius: 10px;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">
+                                <%= futbolista.nombre %>
+                            </h5>
+                            <p class="card-text">
+                                <strong>Posición:</strong>
+                                <%= futbolista.posicion %> <br>
+                                    <strong>Nacionalidad:</strong>
+                                    <%= futbolista.nacionalidad %> <br>
+                                        <strong>ID:</strong>
+                                        <%= futbolista.id %>
+                            </p>
+                            <button class="btn btn-warning btn-sm"
+                                onclick="abrirModalEditar('<%= futbolista._id %>')">Editar</button>
+                            <button class="btn btn-danger btn-sm"
+                                onclick="eliminarFutbolista('<%= futbolista._id %>')">Eliminar</button>
+                        </div>
+                    </div>
                 </div>
+                <% }) %>
+        </div>
 
-                <form id="formEditar" enctype="multipart/form-data">
-                    <input type="hidden" name="_id" id="idEditar">
-                    <input type="number" class="form-control my-2" name="id" id="idInput">
-                    <input type="text" class="form-control my-2" name="nombre" id="nombreInput">
-                    <input type="text" class="form-control my-2" name="posicion" id="posicionInput">
-                    <input type="text" class="form-control my-2" name="nacionalidad" id="nacionalidadInput">
+        <!-- Paginación -->
+        <nav>
+            <ul class="pagination justify-content-center mt-4" id="pagination"></ul>
+        </nav>
+    </div>
 
-                    <!-- Campo oculto para mantener la imagen anterior -->
-                    <input type="hidden" name="imagenActual" id="imagenActual">
 
-                    <!-- Input para subir nueva imagen -->
-                    <label for="imagenEditar">Actualizar imagen:</label>
-                    <input type="file" class="form-control my-2" name="imagen" id="imagenEditar" accept="image/*">
+    <!-- ================= MODAL CREAR FUTBOLISTA ================= -->
+    <div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Crear Futbolista</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formCrear" enctype="multipart/form-data">
+                        <input type="number" placeholder="Id" class="form-control my-2" name="id" id="idCrear">
+                        <input type="text" placeholder="Nombre" class="form-control my-2" name="nombre"
+                            id="nombreCrear">
+                        <input type="text" placeholder="Posición" class="form-control my-2" name="posicion"
+                            id="posicionCrear">
+                        <input type="text" placeholder="Nacionalidad" class="form-control my-2" name="nacionalidad"
+                            id="nacionalidadCrear">
 
-                    <button type="submit" class="btn btn-primary btn-sm">Actualizar</button>
-                </form>
+                        <label for="imagenCrear">Seleccionar imagen:</label>
+                        <input type="file" class="form-control my-2" name="imagen" id="imagenCrear" accept="image/*">
+
+                        <button type="submit" class="btn btn-dark btn-block">Agregar</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const formEditar = document.getElementById('formEditar');
-        const imagenInput = document.getElementById('imagenEditar');
-        const imagenPreview = document.getElementById('imagen-preview');
-        const formCrear = document.getElementById('formCrear');
+    <!-- ================= MODAL EDITAR FUTBOLISTA ================= -->
+    <div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Futbolista</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Imagen actual -->
+                    <div class="text-center">
+                        <img id="imagen-preview" class="img-fluid my-3" style="max-width: 200px; border-radius: 10px;">
+                    </div>
 
-        // ================= ABRIR MODAL DE EDICIÓN =================
-        window.abrirModalEditar = async function (id) {
-            try {
-                const response = await fetch(`/futbolistas/${id}`);
-                const futbolista = await response.json();
+                    <form id="formEditar" enctype="multipart/form-data">
+                        <input type="hidden" name="_id" id="idEditar">
+                        <input type="number" class="form-control my-2" name="id" id="idInput">
+                        <input type="text" class="form-control my-2" name="nombre" id="nombreInput">
+                        <input type="text" class="form-control my-2" name="posicion" id="posicionInput">
+                        <input type="text" class="form-control my-2" name="nacionalidad" id="nacionalidadInput">
 
-                // Verificar si el futbolista existe
-                if (!futbolista || !futbolista._id) {
-                    alert('No se pudo cargar la información del futbolista.');
-                    return;
-                }
+                        <!-- Campo oculto para mantener la imagen anterior -->
+                        <input type="hidden" name="imagenActual" id="imagenActual">
 
-                // Llenar los campos del formulario con los datos obtenidos
-                document.getElementById('idEditar').value = futbolista._id;
-                document.getElementById('idInput').value = futbolista.id;
-                document.getElementById('nombreInput').value = futbolista.nombre;
-                document.getElementById('posicionInput').value = futbolista.posicion;
-                document.getElementById('nacionalidadInput').value = futbolista.nacionalidad;
-                document.getElementById('imagenActual').value = futbolista.imagen;
-                imagenPreview.src = futbolista.imagen ? futbolista.imagen : '/uploads/default.png';
+                        <!-- Input para subir nueva imagen -->
+                        <label for="imagenEditar">Actualizar imagen:</label>
+                        <input type="file" class="form-control my-2" name="imagen" id="imagenEditar" accept="image/*">
 
-                // Mostrar el modal
-                let modalEditar = new bootstrap.Modal(document.getElementById('modalEditar'));
-                modalEditar.show();
-            } catch (error) {
-                console.error("❌ Error al cargar los datos del futbolista:", error);
-                alert("Error al cargar los datos. Inténtalo de nuevo.");
-            }
-        };
+                        <button type="submit" class="btn btn-primary btn-sm">Actualizar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        // ================= MOSTRAR VISTA PREVIA DE IMAGEN AL EDITAR =================
-        imagenInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    imagenPreview.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+    <!-- ================= ESTILOS EXTRA ================= -->
+    <style>
+        .hover-effect {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-        // ================= ENVIAR FORMULARIO DE EDICIÓN =================
-        formEditar.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        .hover-effect:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
+        }
+    </style>
 
-            const id = document.getElementById('idEditar').value;
-            const formData = new FormData();
 
-            formData.append("id", document.getElementById('idInput').value);
-            formData.append("nombre", document.getElementById('nombreInput').value);
-            formData.append("posicion", document.getElementById('posicionInput').value);
-            formData.append("nacionalidad", document.getElementById('nacionalidadInput').value);
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const futbolistasPerPage = 6; // Número de futbolistas por página
+            const futbolistas = document.querySelectorAll('.futbolista-card');
+            const paginationContainer = document.getElementById('pagination');
+            let currentPage = 1;
 
-            // Si el usuario sube una nueva imagen, la adjuntamos
-            if (imagenInput.files.length > 0) {
-                formData.append("imagen", imagenInput.files[0]);
-            } else {
-                formData.append("imagenActual", document.getElementById('imagenActual').value);
-            }
+            function showPage(page) {
+                const startIndex = (page - 1) * futbolistasPerPage;
+                const endIndex = startIndex + futbolistasPerPage;
 
-            try {
-                const response = await fetch(`/futbolistas/${id}`, {
-                    method: 'PUT',
-                    body: formData
+                futbolistas.forEach((futbolista, index) => {
+                    futbolista.style.display = (index >= startIndex && index < endIndex) ? 'block' : 'none';
                 });
 
-                const res = await response.json();
-                if (res.estado) {
-                    alert("Futbolista actualizado correctamente.");
-                    window.location.reload();
-                } else {
-                    alert("Error al actualizar: " + res.mensaje);
-                }
-            } catch (error) {
-                console.error("❌ Error al actualizar:", error);
-                alert("Hubo un error al actualizar el futbolista.");
+                renderPagination(page);
             }
-        });
 
-        // ================= ELIMINAR FUTBOLISTA =================
-        window.eliminarFutbolista = async function (id) {
-            if (confirm("¿Estás seguro de que quieres eliminar este futbolista?")) {
+            function renderPagination(page) {
+                paginationContainer.innerHTML = '';
+                const totalPages = Math.ceil(futbolistas.length / futbolistasPerPage);
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const li = document.createElement('li');
+                    li.className = `page-item ${i === page ? 'active' : ''}`;
+                    li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                    li.addEventListener('click', () => showPage(i));
+                    paginationContainer.appendChild(li);
+                }
+            }
+
+            if (futbolistas.length > futbolistasPerPage) {
+                showPage(currentPage);
+            }
+
+
+
+            const formEditar = document.getElementById('formEditar');
+            const imagenInput = document.getElementById('imagenEditar');
+            const imagenPreview = document.getElementById('imagen-preview');
+            const formCrear = document.getElementById('formCrear');
+
+            // ================= ABRIR MODAL DE EDICIÓN =================
+            window.abrirModalEditar = async function (id) {
                 try {
-                    const response = await fetch(`/futbolistas/${id}`, { method: "DELETE" });
+                    const response = await fetch(`/futbolistas/${id}`);
+                    const futbolista = await response.json();
+
+                    // Verificar si el futbolista existe
+                    if (!futbolista || !futbolista._id) {
+                        alert('No se pudo cargar la información del futbolista.');
+                        return;
+                    }
+
+                    // Llenar los campos del formulario con los datos obtenidos
+                    document.getElementById('idEditar').value = futbolista._id;
+                    document.getElementById('idInput').value = futbolista.id;
+                    document.getElementById('nombreInput').value = futbolista.nombre;
+                    document.getElementById('posicionInput').value = futbolista.posicion;
+                    document.getElementById('nacionalidadInput').value = futbolista.nacionalidad;
+                    document.getElementById('imagenActual').value = futbolista.imagen;
+                    imagenPreview.src = futbolista.imagen ? futbolista.imagen : '/uploads/default.png';
+
+                    // Mostrar el modal
+                    let modalEditar = new bootstrap.Modal(document.getElementById('modalEditar'));
+                    modalEditar.show();
+                } catch (error) {
+                    console.error("❌ Error al cargar los datos del futbolista:", error);
+                    alert("Error al cargar los datos. Inténtalo de nuevo.");
+                }
+            };
+
+            // ================= MOSTRAR VISTA PREVIA DE IMAGEN AL EDITAR =================
+            imagenInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        imagenPreview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // ================= ENVIAR FORMULARIO DE EDICIÓN =================
+            formEditar.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const id = document.getElementById('idEditar').value;
+                const formData = new FormData();
+
+                formData.append("id", document.getElementById('idInput').value);
+                formData.append("nombre", document.getElementById('nombreInput').value);
+                formData.append("posicion", document.getElementById('posicionInput').value);
+                formData.append("nacionalidad", document.getElementById('nacionalidadInput').value);
+
+                // Si el usuario sube una nueva imagen, la adjuntamos
+                if (imagenInput.files.length > 0) {
+                    formData.append("imagen", imagenInput.files[0]);
+                } else {
+                    formData.append("imagenActual", document.getElementById('imagenActual').value);
+                }
+
+                try {
+                    const response = await fetch(`/futbolistas/${id}`, {
+                        method: 'PUT',
+                        body: formData
+                    });
+
                     const res = await response.json();
                     if (res.estado) {
-                        alert("Futbolista eliminado correctamente.");
+                        alert("Futbolista actualizado correctamente.");
                         window.location.reload();
                     } else {
-                        alert("Error al eliminar: " + res.mensaje);
+                        alert("Error al actualizar: " + res.mensaje);
                     }
                 } catch (error) {
-                    console.error("❌ Error al eliminar:", error);
-                    alert("Error al eliminar el futbolista.");
+                    console.error("❌ Error al actualizar:", error);
+                    alert("Hubo un error al actualizar el futbolista.");
                 }
-            }
-        };
+            });
 
-        // ================= CREAR NUEVO FUTBOLISTA =================
-        formCrear.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const formData = new FormData(formCrear);
-
-            try {
-                const response = await fetch('/futbolistas', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const res = await response.json();
-                if (res.estado) {
-                    alert("Futbolista creado correctamente.");
-                    window.location.reload();
-                } else {
-                    alert("Error al crear: " + res.mensaje);
+            // ================= ELIMINAR FUTBOLISTA =================
+            window.eliminarFutbolista = async function (id) {
+                if (confirm("¿Estás seguro de que quieres eliminar este futbolista?")) {
+                    try {
+                        const response = await fetch(`/futbolistas/${id}`, { method: "DELETE" });
+                        const res = await response.json();
+                        if (res.estado) {
+                            alert("Futbolista eliminado correctamente.");
+                            window.location.reload();
+                        } else {
+                            alert("Error al eliminar: " + res.mensaje);
+                        }
+                    } catch (error) {
+                        console.error("❌ Error al eliminar:", error);
+                        alert("Error al eliminar el futbolista.");
+                    }
                 }
-            } catch (error) {
-                console.error("❌ Error al crear futbolista:", error);
-                alert("Hubo un error al crear el futbolista.");
-            }
+            };
+
+            // ================= CREAR NUEVO FUTBOLISTA =================
+            formCrear.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const formData = new FormData(formCrear);
+
+                try {
+                    const response = await fetch('/futbolistas', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const res = await response.json();
+                    if (res.estado) {
+                        alert("Futbolista creado correctamente.");
+                        window.location.reload();
+                    } else {
+                        alert("Error al crear: " + res.mensaje);
+                    }
+                } catch (error) {
+                    console.error("❌ Error al crear futbolista:", error);
+                    alert("Hubo un error al crear el futbolista.");
+                }
+            });
         });
-    });
-</script>
+    </script>
 
-<%- include("template/footer") %>
+    <%- include("template/footer") %>
